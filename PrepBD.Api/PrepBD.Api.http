@@ -1,0 +1,9 @@
+@PrepBD.Api_HostAddress = http://localhost:5177
+
+GET {{PrepBD.Api_HostAddress}}/api/questions/topics
+Accept: application/json
+
+###
+
+GET {{PrepBD.Api_HostAddress}}/api/evaluate/status
+Accept: application/json
