@@ -1,27 +1,763 @@
 [
-  {"id":"db-001","subtopic":"SQL Basics","type":"sql","difficulty":"easy","question":"Write a SQL query to find all employees whose salary is greater than 50000, ordered by salary in descending order.","hints":[],"idealAnswer":"```sql\nSELECT * FROM employees\nWHERE salary > 50000\nORDER BY salary DESC;\n```\nSELECT retrieves data, WHERE filters rows, ORDER BY sorts results. DESC for descending (default is ASC). This is one of the most basic query patterns.","keyPoints":["SELECT FROM WHERE","ORDER BY DESC","basic filtering","correct syntax"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-002","subtopic":"Joins","type":"sql","difficulty":"medium","question":"Write a SQL query to find the names of employees along with their department names. Use the tables: employees(id, name, dept_id) and departments(id, dept_name).","hints":["You need to JOIN the two tables"],"idealAnswer":"```sql\nSELECT e.name, d.dept_name\nFROM employees e\nINNER JOIN departments d ON e.dept_id = d.id;\n```\nINNER JOIN returns only matching rows from both tables. Use table aliases (e, d) for readability. The ON clause specifies the join condition. If you want to include employees without a department, use LEFT JOIN instead.","keyPoints":["INNER JOIN syntax","ON clause for join condition","table aliases","INNER vs LEFT JOIN difference"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-003","subtopic":"Aggregation","type":"sql","difficulty":"medium","question":"Write a SQL query to find the department with the highest average salary. Tables: employees(id, name, salary, dept_id), departments(id, dept_name).","hints":["Use GROUP BY with aggregate functions"],"idealAnswer":"```sql\nSELECT d.dept_name, AVG(e.salary) as avg_salary\nFROM employees e\nJOIN departments d ON e.dept_id = d.id\nGROUP BY d.dept_name\nORDER BY avg_salary DESC\nLIMIT 1;\n```\nAlternatively using HAVING or subquery. GROUP BY groups rows by department, AVG() calculates average per group, ORDER BY + LIMIT 1 gets the highest. HAVING is used to filter groups (like WHERE but for aggregates).","keyPoints":["GROUP BY for grouping","AVG aggregate function","ORDER BY + LIMIT for top 1","JOIN to get department name"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-004","subtopic":"Normalization","type":"conceptual","difficulty":"medium","question":"What is database normalization? Explain 1NF, 2NF, and 3NF with examples.","hints":[],"idealAnswer":"Normalization is organizing database tables to reduce redundancy and avoid anomalies (insert, update, delete anomalies). 1NF (First Normal Form): Each column has atomic (indivisible) values. No repeating groups. Example violation: a 'phones' column with '123,456' — fix by having one phone per row. 2NF: Must be in 1NF + no partial dependencies. All non-key columns must depend on the entire primary key (relevant for composite keys). Example: Table(StudentID, CourseID, StudentName) — StudentName depends only on StudentID, not the full key. Fix: separate into two tables. 3NF: Must be in 2NF + no transitive dependencies. Non-key columns must depend directly on the primary key, not through another non-key column. Example: Table(EmpID, DeptID, DeptName) — DeptName depends on DeptID, not EmpID. Fix: separate department info.","keyPoints":["reduce redundancy","1NF atomic values","2NF no partial dependency","3NF no transitive dependency"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-005","subtopic":"Keys","type":"conceptual","difficulty":"easy","question":"Explain the difference between Primary Key, Foreign Key, and Unique Key with examples.","hints":[],"idealAnswer":"Primary Key: Uniquely identifies each row in a table. Cannot be NULL. Only one per table. Example: employee_id in employees table. Foreign Key: A column that references the Primary Key of another table. Establishes relationships between tables. Can be NULL (optional relationship). Can have duplicates. Example: dept_id in employees referencing id in departments. Unique Key: Ensures all values in a column are distinct. Can be NULL (usually one NULL allowed). Multiple unique keys per table. Example: email in users table — unique but not the primary key. Primary Key = Unique + NOT NULL. A table can have many unique keys but only one primary key.","keyPoints":["PK uniquely identifies, not null, one per table","FK references another table's PK","UK ensures uniqueness, allows null","PK = UK + NOT NULL"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-006","subtopic":"ACID","type":"conceptual","difficulty":"medium","question":"What are ACID properties in database transactions? Explain each.","hints":[],"idealAnswer":"ACID ensures reliable database transactions: Atomicity: A transaction is all-or-nothing. If any part fails, the entire transaction is rolled back. Example: In a bank transfer, debit AND credit must both succeed or both fail. Consistency: A transaction brings the database from one valid state to another. All constraints, rules, and triggers are satisfied. Durability: Once a transaction is committed, it survives system crashes. Data is written to persistent storage. Isolation: Concurrent transactions don't interfere with each other. Each transaction sees a consistent view of data. Isolation levels: Read Uncommitted, Read Committed, Repeatable Read, Serializable.","keyPoints":["Atomicity = all or nothing","Consistency = valid state to valid state","Isolation = concurrent transactions don't interfere","Durability = survives crashes"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-007","subtopic":"Subqueries","type":"sql","difficulty":"medium","question":"Write a SQL query to find employees who earn more than the average salary of all employees.","hints":["Use a subquery in the WHERE clause"],"idealAnswer":"```sql\nSELECT name, salary\nFROM employees\nWHERE salary > (SELECT AVG(salary) FROM employees);\n```\nThe subquery (SELECT AVG(salary) FROM employees) calculates the overall average first. The outer query then filters employees earning above that average. Subqueries can be used in WHERE, FROM, and SELECT clauses. This is a correlated vs non-correlated subquery — this one is non-correlated (inner query runs once independently).","keyPoints":["subquery calculates average","WHERE clause with subquery","non-correlated subquery","runs inner query first"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-008","subtopic":"Joins","type":"comparison","difficulty":"medium","question":"Explain the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN.","hints":[],"idealAnswer":"INNER JOIN: Returns only rows that have matching values in BOTH tables. Non-matching rows are excluded. LEFT JOIN (LEFT OUTER JOIN): Returns ALL rows from the left table, and matching rows from the right table. If no match, right side columns are NULL. RIGHT JOIN (RIGHT OUTER JOIN): Returns ALL rows from the right table, and matching rows from the left table. If no match, left side columns are NULL. FULL OUTER JOIN: Returns ALL rows from both tables. Matching rows are combined. Non-matching rows from either table get NULLs for the other table's columns. Example: If employees has 10 rows and 2 have no department, INNER JOIN returns 8, LEFT JOIN returns 10.","keyPoints":["INNER = matching only","LEFT = all left + matching right","RIGHT = all right + matching left","FULL = all from both tables"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-009","subtopic":"Indexing","type":"conceptual","difficulty":"medium","question":"What is a database index? How does it improve query performance? What are the trade-offs?","hints":[],"idealAnswer":"An index is a data structure (usually B-tree or hash) that allows the database to find rows quickly without scanning the entire table. Like a book's index — instead of reading every page, look up the topic and jump to the page. How it helps: Without index, SELECT WHERE name='John' scans all rows (O(n)). With index on name column, it uses B-tree to find in O(log n). Trade-offs: 1) Slower writes — every INSERT/UPDATE/DELETE must also update the index. 2) Extra storage space. 3) Too many indexes hurt write performance. Best practices: Index columns used in WHERE, JOIN, ORDER BY. Don't index low-cardinality columns (e.g., boolean). Don't over-index.","keyPoints":["B-tree or hash structure","O(log n) vs O(n) lookup","slower writes as trade-off","index WHERE/JOIN/ORDER BY columns"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-010","subtopic":"SQL Basics","type":"sql","difficulty":"easy","question":"Write SQL queries to: 1) Count total employees 2) Find maximum salary 3) Find average salary per department.","hints":[],"idealAnswer":"```sql\n-- 1. Count total employees\nSELECT COUNT(*) AS total_employees FROM employees;\n\n-- 2. Find maximum salary\nSELECT MAX(salary) AS max_salary FROM employees;\n\n-- 3. Average salary per department\nSELECT dept_id, AVG(salary) AS avg_salary\nFROM employees\nGROUP BY dept_id;\n```\nAggregate functions: COUNT(*) counts rows, MAX() finds maximum, AVG() calculates average. GROUP BY groups rows for per-group aggregation. Other aggregates: SUM(), MIN(). Use HAVING to filter groups (e.g., HAVING AVG(salary) > 50000).","keyPoints":["COUNT MAX AVG aggregate functions","GROUP BY for per-group aggregation","HAVING vs WHERE","correct syntax"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-011","subtopic":"SQL Advanced","type":"sql","difficulty":"medium","question":"Write a SQL query to find the second highest salary from the employees table.","hints":["There are multiple approaches — subquery, LIMIT OFFSET, or DENSE_RANK"],"idealAnswer":"```sql\n-- Approach 1: Subquery\nSELECT MAX(salary) AS second_highest\nFROM employees\nWHERE salary < (SELECT MAX(salary) FROM employees);\n\n-- Approach 2: LIMIT OFFSET\nSELECT DISTINCT salary\nFROM employees\nORDER BY salary DESC\nLIMIT 1 OFFSET 1;\n\n-- Approach 3: DENSE_RANK (handles ties)\nSELECT salary FROM (\n    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) as rank\n    FROM employees\n) t WHERE rank = 2;\n```\nApproach 1: Find max salary less than the overall max. Approach 2: Sort descending, skip first, take next. Approach 3: Window function handles ties correctly.","keyPoints":["multiple approaches exist","subquery approach","LIMIT OFFSET approach","DENSE_RANK for handling ties"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-012","subtopic":"ER Diagrams","type":"conceptual","difficulty":"easy","question":"What is an ER diagram? Explain entities, attributes, and relationships with an example.","hints":[],"idealAnswer":"An ER (Entity-Relationship) diagram is a visual representation of the database structure showing entities, their attributes, and relationships. Entity: A real-world object or concept. Represented as a rectangle. Example: Student, Course, Department. Attribute: Properties of an entity. Represented as ovals. Example: Student has name, id, email. Types: simple, composite (address = street+city), derived (age from DOB), multivalued (phone numbers). Relationship: Association between entities. Represented as a diamond. Example: Student 'enrolls in' Course. Cardinality: One-to-One (1:1) — person:passport. One-to-Many (1:N) — department:employees. Many-to-Many (M:N) — students:courses.","keyPoints":["entity = rectangle","attribute = oval","relationship = diamond","cardinality types 1:1, 1:N, M:N"],"companyRelevance":["therap","general"]},
-  {"id":"db-013","subtopic":"Transactions","type":"conceptual","difficulty":"medium","question":"What is a database transaction? Explain COMMIT and ROLLBACK with a bank transfer example.","hints":[],"idealAnswer":"A transaction is a sequence of database operations that are treated as a single logical unit of work. Either ALL operations succeed (COMMIT) or NONE of them take effect (ROLLBACK). Bank transfer example:\n```sql\nBEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 1000 WHERE id = 'A'; -- debit\nUPDATE accounts SET balance = balance + 1000 WHERE id = 'B'; -- credit\n-- If both succeed:\nCOMMIT;\n-- If any fails:\nROLLBACK;\n```\nCOMMIT makes changes permanent. ROLLBACK undoes all changes since BEGIN. Without transactions, if the system crashes after debit but before credit, money is lost. Transactions ensure atomicity — the 'A' in ACID.","keyPoints":["single logical unit of work","COMMIT makes permanent","ROLLBACK undoes all","bank transfer example"],"companyRelevance":["bkash","therap","general"]},
-  {"id":"db-014","subtopic":"SQL Advanced","type":"sql","difficulty":"medium","question":"What is the difference between WHERE and HAVING in SQL? Write an example query using HAVING.","hints":["WHERE filters rows, HAVING filters groups"],"idealAnswer":"WHERE filters individual rows BEFORE grouping (used with SELECT, UPDATE, DELETE). HAVING filters groups AFTER GROUP BY aggregation. WHERE cannot use aggregate functions. HAVING can. Example:\n```sql\n-- Find departments with more than 5 employees\nSELECT dept_id, COUNT(*) as emp_count\nFROM employees\nWHERE status = 'active'      -- filters rows first\nGROUP BY dept_id\nHAVING COUNT(*) > 5;          -- filters groups after\n```\nExecution order: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. WHERE reduces data before grouping (more efficient), HAVING filters the aggregated results.","keyPoints":["WHERE before GROUP BY","HAVING after GROUP BY","WHERE can't use aggregates","HAVING can use aggregates"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-015","subtopic":"Normalization","type":"scenario","difficulty":"medium","question":"You have a table: Orders(order_id, customer_name, customer_email, product_name, product_price, quantity). What normalization issues does it have? How would you fix them?","hints":["Look for redundancy"],"idealAnswer":"Issues: 1) Customer info (name, email) repeated for every order — update anomaly (change email = update many rows). 2) Product info (name, price) repeated — if product doesn't have an order, we can't store it (insert anomaly). 3) Deleting last order deletes customer/product info (delete anomaly). Fix — normalize into 3NF:\n```\nCustomers(customer_id, name, email)\nProducts(product_id, name, price)\nOrders(order_id, customer_id FK, product_id FK, quantity)\n```\nNow each entity has its own table. Customer changes only need one update. Products exist independently of orders. No redundancy.","keyPoints":["identify redundancy","update/insert/delete anomalies","separate into entity tables","use foreign keys"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-016","subtopic":"SQL Basics","type":"sql","difficulty":"easy","question":"What is the difference between DELETE, TRUNCATE, and DROP in SQL?","hints":[],"idealAnswer":"DELETE: Removes specific rows based on a condition. Can use WHERE clause. Logged operation (can be rolled back). Fires triggers. Slower for large tables. Example: DELETE FROM employees WHERE dept_id = 5; TRUNCATE: Removes ALL rows from a table but keeps the structure. Cannot use WHERE. Faster than DELETE (deallocates pages). Resets auto-increment. Cannot be rolled back in most DBMS. Example: TRUNCATE TABLE employees; DROP: Removes the entire table — structure, data, indexes, everything. Cannot be undone. Example: DROP TABLE employees; Think of it as: DELETE = erase specific data, TRUNCATE = empty the table, DROP = destroy the table.","keyPoints":["DELETE removes rows with WHERE","TRUNCATE removes all rows keeps structure","DROP removes entire table","DELETE can be rolled back"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-017","subtopic":"SQL Advanced","type":"sql","difficulty":"medium","question":"Write a SQL query to find duplicate email addresses in a users table.","hints":["GROUP BY and HAVING"],"idealAnswer":"```sql\nSELECT email, COUNT(*) as count\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1;\n```\nGroup by email, then filter groups where count > 1 (meaning that email appears more than once). To also get the full rows of duplicates:\n```sql\nSELECT * FROM users\nWHERE email IN (\n    SELECT email FROM users\n    GROUP BY email\n    HAVING COUNT(*) > 1\n);\n```\nThis is a common interview question that tests GROUP BY + HAVING understanding.","keyPoints":["GROUP BY email","HAVING COUNT > 1","subquery to get full rows","common interview question"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-018","subtopic":"SQL Advanced","type":"sql","difficulty":"medium","question":"What is a VIEW in SQL? Create a view that shows employee names with their department names.","hints":[],"idealAnswer":"A VIEW is a virtual table based on a SQL query. It doesn't store data itself — it runs the underlying query when accessed. Benefits: 1) Simplifies complex queries. 2) Provides security (show only certain columns). 3) Logical data independence.\n```sql\nCREATE VIEW emp_dept_view AS\nSELECT e.name AS employee_name, d.dept_name\nFROM employees e\nJOIN departments d ON e.dept_id = d.id;\n\n-- Usage:\nSELECT * FROM emp_dept_view WHERE dept_name = 'Engineering';\n```\nViews can be queried like regular tables. Updatable views (simple ones) allow INSERT/UPDATE through them. Materialized views store the result physically for performance.","keyPoints":["virtual table from query","doesn't store data","simplifies complex queries","CREATE VIEW syntax"],"companyRelevance":["therap","general"]},
-  {"id":"db-019","subtopic":"Joins","type":"sql","difficulty":"medium","question":"Write a SQL query to find employees who do NOT belong to any department (their dept_id is NULL or doesn't exist in departments table).","hints":["LEFT JOIN and check for NULL, or use NOT IN / NOT EXISTS"],"idealAnswer":"```sql\n-- Approach 1: LEFT JOIN + IS NULL\nSELECT e.name\nFROM employees e\nLEFT JOIN departments d ON e.dept_id = d.id\nWHERE d.id IS NULL;\n\n-- Approach 2: NOT EXISTS\nSELECT name FROM employees e\nWHERE NOT EXISTS (\n    SELECT 1 FROM departments d WHERE d.id = e.dept_id\n);\n\n-- Approach 3: NOT IN\nSELECT name FROM employees\nWHERE dept_id NOT IN (SELECT id FROM departments);\n```\nLEFT JOIN approach: join all employees with departments, then filter where department side is NULL (no match). NOT EXISTS is often the most efficient for large tables.","keyPoints":["LEFT JOIN with NULL check","NOT EXISTS approach","NOT IN approach","finding non-matching rows"],"companyRelevance":["therap","bkash","general"]},
-  {"id":"db-020","subtopic":"Constraints","type":"conceptual","difficulty":"easy","question":"What are SQL constraints? Explain NOT NULL, CHECK, DEFAULT, and FOREIGN KEY with examples.","hints":[],"idealAnswer":"Constraints enforce rules on table data to maintain integrity. NOT NULL: Column cannot have NULL values. Example: name VARCHAR(50) NOT NULL. CHECK: Ensures values satisfy a condition. Example: age INT CHECK (age >= 18). DEFAULT: Sets a default value if none is provided. Example: status VARCHAR(20) DEFAULT 'active'. FOREIGN KEY: Ensures referential integrity — value must exist in referenced table. Example: dept_id INT FOREIGN KEY REFERENCES departments(id). Other constraints: PRIMARY KEY (unique + not null), UNIQUE (no duplicates). Constraints prevent invalid data from entering the database, maintaining data integrity.","keyPoints":["NOT NULL prevents nulls","CHECK validates conditions","DEFAULT sets fallback value","FK ensures referential integrity"],"companyRelevance":["therap","general"]},
-  {"id":"db-021","subtopic":"SQL Advanced","type":"sql","difficulty":"medium","question":"Write a SQL query to find the top 3 highest paid employees in each department.","hints":["Window functions or correlated subquery"],"idealAnswer":"```sql\n-- Using DENSE_RANK window function\nSELECT name, dept_id, salary\nFROM (\n    SELECT name, dept_id, salary,\n           DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) as rank\n    FROM employees\n) ranked\nWHERE rank <= 3;\n```\nPARTITION BY dept_id creates groups per department. ORDER BY salary DESC ranks within each group. DENSE_RANK handles ties (two people with same salary get same rank). ROW_NUMBER would give unique ranks even for ties. RANK would skip numbers after ties.","keyPoints":["DENSE_RANK window function","PARTITION BY for grouping","OVER clause","difference between RANK, DENSE_RANK, ROW_NUMBER"],"companyRelevance":["bkash","therap","general"]},
-  {"id":"db-022","subtopic":"Transactions","type":"conceptual","difficulty":"medium","question":"What are isolation levels in database transactions? Name them from least to most strict.","hints":[],"idealAnswer":"Isolation levels control how much transactions can see each other's changes. From least to most strict: 1) Read Uncommitted: Can read uncommitted changes (dirty reads). Fastest but dangerous. 2) Read Committed: Can only read committed data. Prevents dirty reads. Default in PostgreSQL, Oracle. 3) Repeatable Read: Ensures reading the same data twice gives same result within a transaction. Prevents dirty reads and non-repeatable reads. Default in MySQL. 4) Serializable: Complete isolation — transactions behave as if executed one after another. Prevents all phenomena but slowest. Problems: Dirty Read (reading uncommitted data), Non-Repeatable Read (same query, different results), Phantom Read (new rows appear).","keyPoints":["four isolation levels","dirty read/non-repeatable read/phantom read","trade-off between consistency and performance","which level prevents which problem"],"companyRelevance":["bkash","general"]},
-  {"id":"db-023","subtopic":"SQL Basics","type":"comparison","difficulty":"easy","question":"What is the difference between UNION and UNION ALL in SQL?","hints":[],"idealAnswer":"UNION combines results of two SELECT queries and removes duplicate rows. UNION ALL combines results and keeps ALL rows including duplicates. UNION is slower because it performs a DISTINCT operation to remove duplicates. UNION ALL is faster since it just concatenates results. Example:\n```sql\nSELECT city FROM customers\nUNION\nSELECT city FROM suppliers;\n-- Returns unique cities from both tables\n\nSELECT city FROM customers\nUNION ALL\nSELECT city FROM suppliers;\n-- Returns all cities, with duplicates\n```\nUse UNION ALL when you know there are no duplicates or when duplicates are acceptable — it's more performant.","keyPoints":["UNION removes duplicates","UNION ALL keeps all rows","UNION is slower","both require same column count/types"],"companyRelevance":["therap","general"]},
-  {"id":"db-024","subtopic":"SQL Advanced","type":"sql","difficulty":"medium","question":"Write a SQL query to find customers who have placed more than 3 orders in the last 30 days. Tables: customers(id, name), orders(id, customer_id, order_date).","hints":[],"idealAnswer":"```sql\nSELECT c.name, COUNT(o.id) as order_count\nFROM customers c\nJOIN orders o ON c.id = o.customer_id\nWHERE o.order_date >= CURRENT_DATE - INTERVAL '30 days'\nGROUP BY c.id, c.name\nHAVING COUNT(o.id) > 3;\n```\nJOIN connects customers with their orders. WHERE filters to last 30 days. GROUP BY c.id (grouping by primary key is important). HAVING filters groups with count > 3. Date syntax may vary: MySQL uses DATE_SUB(NOW(), INTERVAL 30 DAY).","keyPoints":["JOIN + WHERE date filter","GROUP BY customer","HAVING for count filter","date arithmetic syntax"],"companyRelevance":["bkash","general"]},
-  {"id":"db-025","subtopic":"Indexing","type":"scenario","difficulty":"medium","question":"You have a slow query: SELECT * FROM orders WHERE customer_id = 123 AND status = 'pending' ORDER BY created_at DESC. How would you optimize it?","hints":["Think about what columns to index"],"idealAnswer":"1) Create a composite index on the columns used in WHERE and ORDER BY: CREATE INDEX idx_orders_cust_status_date ON orders(customer_id, status, created_at DESC); This composite index helps the query find rows by customer_id and status efficiently, and returns them already sorted by created_at. 2) Avoid SELECT * — select only needed columns to reduce I/O. 3) Check if customer_id already has an index. 4) Use EXPLAIN to analyze the query plan before and after. 5) Column order in composite index matters — put equality conditions (customer_id, status) before range/sort columns (created_at). This is called the 'leftmost prefix rule'.","keyPoints":["composite index on WHERE + ORDER BY columns","column order matters in index","avoid SELECT *","use EXPLAIN to verify"],"companyRelevance":["bkash","therap","general"]}
+  {
+    "id": "db-001",
+    "subtopic": "SQL Basics",
+    "type": "sql",
+    "difficulty": "easy",
+    "question": "Write a SQL query to find all employees whose salary is greater than 50000, ordered by salary in descending order.",
+    "hints": [],
+    "idealAnswer": "```sql\nSELECT * FROM employees\nWHERE salary > 50000\nORDER BY salary DESC;\n```\nSELECT retrieves data, WHERE filters rows, ORDER BY sorts results. DESC for descending (default is ASC). This is one of the most basic query patterns.",
+    "keyPoints": [
+      "SELECT FROM WHERE",
+      "ORDER BY DESC",
+      "basic filtering",
+      "correct syntax"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-002",
+    "subtopic": "Joins",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find the names of employees along with their department names. Use the tables: employees(id, name, dept_id) and departments(id, dept_name).",
+    "hints": [
+      "You need to JOIN the two tables"
+    ],
+    "idealAnswer": "```sql\nSELECT e.name, d.dept_name\nFROM employees e\nINNER JOIN departments d ON e.dept_id = d.id;\n```\nINNER JOIN returns only matching rows from both tables. Use table aliases (e, d) for readability. The ON clause specifies the join condition. If you want to include employees without a department, use LEFT JOIN instead.",
+    "keyPoints": [
+      "INNER JOIN syntax",
+      "ON clause for join condition",
+      "table aliases",
+      "INNER vs LEFT JOIN difference"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-003",
+    "subtopic": "Aggregation",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find the department with the highest average salary. Tables: employees(id, name, salary, dept_id), departments(id, dept_name).",
+    "hints": [
+      "Use GROUP BY with aggregate functions"
+    ],
+    "idealAnswer": "```sql\nSELECT d.dept_name, AVG(e.salary) as avg_salary\nFROM employees e\nJOIN departments d ON e.dept_id = d.id\nGROUP BY d.dept_name\nORDER BY avg_salary DESC\nLIMIT 1;\n```\nAlternatively using HAVING or subquery. GROUP BY groups rows by department, AVG() calculates average per group, ORDER BY + LIMIT 1 gets the highest. HAVING is used to filter groups (like WHERE but for aggregates).",
+    "keyPoints": [
+      "GROUP BY for grouping",
+      "AVG aggregate function",
+      "ORDER BY + LIMIT for top 1",
+      "JOIN to get department name"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-004",
+    "subtopic": "Normalization",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What is database normalization? Explain 1NF, 2NF, and 3NF with examples.",
+    "hints": [],
+    "idealAnswer": "Normalization is organizing database tables to reduce redundancy and avoid anomalies (insert, update, delete anomalies). 1NF (First Normal Form): Each column has atomic (indivisible) values. No repeating groups. Example violation: a 'phones' column with '123,456' \u2014 fix by having one phone per row. 2NF: Must be in 1NF + no partial dependencies. All non-key columns must depend on the entire primary key (relevant for composite keys). Example: Table(StudentID, CourseID, StudentName) \u2014 StudentName depends only on StudentID, not the full key. Fix: separate into two tables. 3NF: Must be in 2NF + no transitive dependencies. Non-key columns must depend directly on the primary key, not through another non-key column. Example: Table(EmpID, DeptID, DeptName) \u2014 DeptName depends on DeptID, not EmpID. Fix: separate department info.",
+    "keyPoints": [
+      "reduce redundancy",
+      "1NF atomic values",
+      "2NF no partial dependency",
+      "3NF no transitive dependency"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-005",
+    "subtopic": "Keys",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "question": "Explain the difference between Primary Key, Foreign Key, and Unique Key with examples.",
+    "hints": [],
+    "idealAnswer": "Primary Key: Uniquely identifies each row in a table. Cannot be NULL. Only one per table. Example: employee_id in employees table. Foreign Key: A column that references the Primary Key of another table. Establishes relationships between tables. Can be NULL (optional relationship). Can have duplicates. Example: dept_id in employees referencing id in departments. Unique Key: Ensures all values in a column are distinct. Can be NULL (usually one NULL allowed). Multiple unique keys per table. Example: email in users table \u2014 unique but not the primary key. Primary Key = Unique + NOT NULL. A table can have many unique keys but only one primary key.",
+    "keyPoints": [
+      "PK uniquely identifies, not null, one per table",
+      "FK references another table's PK",
+      "UK ensures uniqueness, allows null",
+      "PK = UK + NOT NULL"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-006",
+    "subtopic": "ACID",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What are ACID properties in database transactions? Explain each.",
+    "hints": [],
+    "idealAnswer": "ACID ensures reliable database transactions: Atomicity: A transaction is all-or-nothing. If any part fails, the entire transaction is rolled back. Example: In a bank transfer, debit AND credit must both succeed or both fail. Consistency: A transaction brings the database from one valid state to another. All constraints, rules, and triggers are satisfied. Durability: Once a transaction is committed, it survives system crashes. Data is written to persistent storage. Isolation: Concurrent transactions don't interfere with each other. Each transaction sees a consistent view of data. Isolation levels: Read Uncommitted, Read Committed, Repeatable Read, Serializable.",
+    "keyPoints": [
+      "Atomicity = all or nothing",
+      "Consistency = valid state to valid state",
+      "Isolation = concurrent transactions don't interfere",
+      "Durability = survives crashes"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-007",
+    "subtopic": "Subqueries",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find employees who earn more than the average salary of all employees.",
+    "hints": [
+      "Use a subquery in the WHERE clause"
+    ],
+    "idealAnswer": "```sql\nSELECT name, salary\nFROM employees\nWHERE salary > (SELECT AVG(salary) FROM employees);\n```\nThe subquery (SELECT AVG(salary) FROM employees) calculates the overall average first. The outer query then filters employees earning above that average. Subqueries can be used in WHERE, FROM, and SELECT clauses. This is a correlated vs non-correlated subquery \u2014 this one is non-correlated (inner query runs once independently).",
+    "keyPoints": [
+      "subquery calculates average",
+      "WHERE clause with subquery",
+      "non-correlated subquery",
+      "runs inner query first"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-008",
+    "subtopic": "Joins",
+    "type": "comparison",
+    "difficulty": "medium",
+    "question": "Explain the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN.",
+    "hints": [],
+    "idealAnswer": "INNER JOIN: Returns only rows that have matching values in BOTH tables. Non-matching rows are excluded. LEFT JOIN (LEFT OUTER JOIN): Returns ALL rows from the left table, and matching rows from the right table. If no match, right side columns are NULL. RIGHT JOIN (RIGHT OUTER JOIN): Returns ALL rows from the right table, and matching rows from the left table. If no match, left side columns are NULL. FULL OUTER JOIN: Returns ALL rows from both tables. Matching rows are combined. Non-matching rows from either table get NULLs for the other table's columns. Example: If employees has 10 rows and 2 have no department, INNER JOIN returns 8, LEFT JOIN returns 10.",
+    "keyPoints": [
+      "INNER = matching only",
+      "LEFT = all left + matching right",
+      "RIGHT = all right + matching left",
+      "FULL = all from both tables"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-009",
+    "subtopic": "Indexing",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What is a database index? How does it improve query performance? What are the trade-offs?",
+    "hints": [],
+    "idealAnswer": "An index is a data structure (usually B-tree or hash) that allows the database to find rows quickly without scanning the entire table. Like a book's index \u2014 instead of reading every page, look up the topic and jump to the page. How it helps: Without index, SELECT WHERE name='John' scans all rows (O(n)). With index on name column, it uses B-tree to find in O(log n). Trade-offs: 1) Slower writes \u2014 every INSERT/UPDATE/DELETE must also update the index. 2) Extra storage space. 3) Too many indexes hurt write performance. Best practices: Index columns used in WHERE, JOIN, ORDER BY. Don't index low-cardinality columns (e.g., boolean). Don't over-index.",
+    "keyPoints": [
+      "B-tree or hash structure",
+      "O(log n) vs O(n) lookup",
+      "slower writes as trade-off",
+      "index WHERE/JOIN/ORDER BY columns"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-010",
+    "subtopic": "SQL Basics",
+    "type": "sql",
+    "difficulty": "easy",
+    "question": "Write SQL queries to: 1) Count total employees 2) Find maximum salary 3) Find average salary per department.",
+    "hints": [],
+    "idealAnswer": "```sql\n-- 1. Count total employees\nSELECT COUNT(*) AS total_employees FROM employees;\n\n-- 2. Find maximum salary\nSELECT MAX(salary) AS max_salary FROM employees;\n\n-- 3. Average salary per department\nSELECT dept_id, AVG(salary) AS avg_salary\nFROM employees\nGROUP BY dept_id;\n```\nAggregate functions: COUNT(*) counts rows, MAX() finds maximum, AVG() calculates average. GROUP BY groups rows for per-group aggregation. Other aggregates: SUM(), MIN(). Use HAVING to filter groups (e.g., HAVING AVG(salary) > 50000).",
+    "keyPoints": [
+      "COUNT MAX AVG aggregate functions",
+      "GROUP BY for per-group aggregation",
+      "HAVING vs WHERE",
+      "correct syntax"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-011",
+    "subtopic": "SQL Advanced",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find the second highest salary from the employees table.",
+    "hints": [
+      "There are multiple approaches \u2014 subquery, LIMIT OFFSET, or DENSE_RANK"
+    ],
+    "idealAnswer": "```sql\n-- Approach 1: Subquery\nSELECT MAX(salary) AS second_highest\nFROM employees\nWHERE salary < (SELECT MAX(salary) FROM employees);\n\n-- Approach 2: LIMIT OFFSET\nSELECT DISTINCT salary\nFROM employees\nORDER BY salary DESC\nLIMIT 1 OFFSET 1;\n\n-- Approach 3: DENSE_RANK (handles ties)\nSELECT salary FROM (\n    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) as rank\n    FROM employees\n) t WHERE rank = 2;\n```\nApproach 1: Find max salary less than the overall max. Approach 2: Sort descending, skip first, take next. Approach 3: Window function handles ties correctly.",
+    "keyPoints": [
+      "multiple approaches exist",
+      "subquery approach",
+      "LIMIT OFFSET approach",
+      "DENSE_RANK for handling ties"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-012",
+    "subtopic": "ER Diagrams",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "question": "What is an ER diagram? Explain entities, attributes, and relationships with an example.",
+    "hints": [],
+    "idealAnswer": "An ER (Entity-Relationship) diagram is a visual representation of the database structure showing entities, their attributes, and relationships. Entity: A real-world object or concept. Represented as a rectangle. Example: Student, Course, Department. Attribute: Properties of an entity. Represented as ovals. Example: Student has name, id, email. Types: simple, composite (address = street+city), derived (age from DOB), multivalued (phone numbers). Relationship: Association between entities. Represented as a diamond. Example: Student 'enrolls in' Course. Cardinality: One-to-One (1:1) \u2014 person:passport. One-to-Many (1:N) \u2014 department:employees. Many-to-Many (M:N) \u2014 students:courses.",
+    "keyPoints": [
+      "entity = rectangle",
+      "attribute = oval",
+      "relationship = diamond",
+      "cardinality types 1:1, 1:N, M:N"
+    ],
+    "companyRelevance": [
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-013",
+    "subtopic": "Transactions",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What is a database transaction? Explain COMMIT and ROLLBACK with a bank transfer example.",
+    "hints": [],
+    "idealAnswer": "A transaction is a sequence of database operations that are treated as a single logical unit of work. Either ALL operations succeed (COMMIT) or NONE of them take effect (ROLLBACK). Bank transfer example:\n```sql\nBEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 1000 WHERE id = 'A'; -- debit\nUPDATE accounts SET balance = balance + 1000 WHERE id = 'B'; -- credit\n-- If both succeed:\nCOMMIT;\n-- If any fails:\nROLLBACK;\n```\nCOMMIT makes changes permanent. ROLLBACK undoes all changes since BEGIN. Without transactions, if the system crashes after debit but before credit, money is lost. Transactions ensure atomicity \u2014 the 'A' in ACID.",
+    "keyPoints": [
+      "single logical unit of work",
+      "COMMIT makes permanent",
+      "ROLLBACK undoes all",
+      "bank transfer example"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-014",
+    "subtopic": "SQL Advanced",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "What is the difference between WHERE and HAVING in SQL? Write an example query using HAVING.",
+    "hints": [
+      "WHERE filters rows, HAVING filters groups"
+    ],
+    "idealAnswer": "WHERE filters individual rows BEFORE grouping (used with SELECT, UPDATE, DELETE). HAVING filters groups AFTER GROUP BY aggregation. WHERE cannot use aggregate functions. HAVING can. Example:\n```sql\n-- Find departments with more than 5 employees\nSELECT dept_id, COUNT(*) as emp_count\nFROM employees\nWHERE status = 'active'      -- filters rows first\nGROUP BY dept_id\nHAVING COUNT(*) > 5;          -- filters groups after\n```\nExecution order: FROM \u2192 WHERE \u2192 GROUP BY \u2192 HAVING \u2192 SELECT \u2192 ORDER BY. WHERE reduces data before grouping (more efficient), HAVING filters the aggregated results.",
+    "keyPoints": [
+      "WHERE before GROUP BY",
+      "HAVING after GROUP BY",
+      "WHERE can't use aggregates",
+      "HAVING can use aggregates"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-015",
+    "subtopic": "Normalization",
+    "type": "scenario",
+    "difficulty": "medium",
+    "question": "You have a table: Orders(order_id, customer_name, customer_email, product_name, product_price, quantity). What normalization issues does it have? How would you fix them?",
+    "hints": [
+      "Look for redundancy"
+    ],
+    "idealAnswer": "Issues: 1) Customer info (name, email) repeated for every order \u2014 update anomaly (change email = update many rows). 2) Product info (name, price) repeated \u2014 if product doesn't have an order, we can't store it (insert anomaly). 3) Deleting last order deletes customer/product info (delete anomaly). Fix \u2014 normalize into 3NF:\n```\nCustomers(customer_id, name, email)\nProducts(product_id, name, price)\nOrders(order_id, customer_id FK, product_id FK, quantity)\n```\nNow each entity has its own table. Customer changes only need one update. Products exist independently of orders. No redundancy.",
+    "keyPoints": [
+      "identify redundancy",
+      "update/insert/delete anomalies",
+      "separate into entity tables",
+      "use foreign keys"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-016",
+    "subtopic": "SQL Basics",
+    "type": "sql",
+    "difficulty": "easy",
+    "question": "What is the difference between DELETE, TRUNCATE, and DROP in SQL?",
+    "hints": [],
+    "idealAnswer": "DELETE: Removes specific rows based on a condition. Can use WHERE clause. Logged operation (can be rolled back). Fires triggers. Slower for large tables. Example: DELETE FROM employees WHERE dept_id = 5; TRUNCATE: Removes ALL rows from a table but keeps the structure. Cannot use WHERE. Faster than DELETE (deallocates pages). Resets auto-increment. Cannot be rolled back in most DBMS. Example: TRUNCATE TABLE employees; DROP: Removes the entire table \u2014 structure, data, indexes, everything. Cannot be undone. Example: DROP TABLE employees; Think of it as: DELETE = erase specific data, TRUNCATE = empty the table, DROP = destroy the table.",
+    "keyPoints": [
+      "DELETE removes rows with WHERE",
+      "TRUNCATE removes all rows keeps structure",
+      "DROP removes entire table",
+      "DELETE can be rolled back"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-017",
+    "subtopic": "SQL Advanced",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find duplicate email addresses in a users table.",
+    "hints": [
+      "GROUP BY and HAVING"
+    ],
+    "idealAnswer": "```sql\nSELECT email, COUNT(*) as count\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1;\n```\nGroup by email, then filter groups where count > 1 (meaning that email appears more than once). To also get the full rows of duplicates:\n```sql\nSELECT * FROM users\nWHERE email IN (\n    SELECT email FROM users\n    GROUP BY email\n    HAVING COUNT(*) > 1\n);\n```\nThis is a common interview question that tests GROUP BY + HAVING understanding.",
+    "keyPoints": [
+      "GROUP BY email",
+      "HAVING COUNT > 1",
+      "subquery to get full rows",
+      "common interview question"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-018",
+    "subtopic": "SQL Advanced",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "What is a VIEW in SQL? Create a view that shows employee names with their department names.",
+    "hints": [],
+    "idealAnswer": "A VIEW is a virtual table based on a SQL query. It doesn't store data itself \u2014 it runs the underlying query when accessed. Benefits: 1) Simplifies complex queries. 2) Provides security (show only certain columns). 3) Logical data independence.\n```sql\nCREATE VIEW emp_dept_view AS\nSELECT e.name AS employee_name, d.dept_name\nFROM employees e\nJOIN departments d ON e.dept_id = d.id;\n\n-- Usage:\nSELECT * FROM emp_dept_view WHERE dept_name = 'Engineering';\n```\nViews can be queried like regular tables. Updatable views (simple ones) allow INSERT/UPDATE through them. Materialized views store the result physically for performance.",
+    "keyPoints": [
+      "virtual table from query",
+      "doesn't store data",
+      "simplifies complex queries",
+      "CREATE VIEW syntax"
+    ],
+    "companyRelevance": [
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-019",
+    "subtopic": "Joins",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find employees who do NOT belong to any department (their dept_id is NULL or doesn't exist in departments table).",
+    "hints": [
+      "LEFT JOIN and check for NULL, or use NOT IN / NOT EXISTS"
+    ],
+    "idealAnswer": "```sql\n-- Approach 1: LEFT JOIN + IS NULL\nSELECT e.name\nFROM employees e\nLEFT JOIN departments d ON e.dept_id = d.id\nWHERE d.id IS NULL;\n\n-- Approach 2: NOT EXISTS\nSELECT name FROM employees e\nWHERE NOT EXISTS (\n    SELECT 1 FROM departments d WHERE d.id = e.dept_id\n);\n\n-- Approach 3: NOT IN\nSELECT name FROM employees\nWHERE dept_id NOT IN (SELECT id FROM departments);\n```\nLEFT JOIN approach: join all employees with departments, then filter where department side is NULL (no match). NOT EXISTS is often the most efficient for large tables.",
+    "keyPoints": [
+      "LEFT JOIN with NULL check",
+      "NOT EXISTS approach",
+      "NOT IN approach",
+      "finding non-matching rows"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-020",
+    "subtopic": "Constraints",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "question": "What are SQL constraints? Explain NOT NULL, CHECK, DEFAULT, and FOREIGN KEY with examples.",
+    "hints": [],
+    "idealAnswer": "Constraints enforce rules on table data to maintain integrity. NOT NULL: Column cannot have NULL values. Example: name VARCHAR(50) NOT NULL. CHECK: Ensures values satisfy a condition. Example: age INT CHECK (age >= 18). DEFAULT: Sets a default value if none is provided. Example: status VARCHAR(20) DEFAULT 'active'. FOREIGN KEY: Ensures referential integrity \u2014 value must exist in referenced table. Example: dept_id INT FOREIGN KEY REFERENCES departments(id). Other constraints: PRIMARY KEY (unique + not null), UNIQUE (no duplicates). Constraints prevent invalid data from entering the database, maintaining data integrity.",
+    "keyPoints": [
+      "NOT NULL prevents nulls",
+      "CHECK validates conditions",
+      "DEFAULT sets fallback value",
+      "FK ensures referential integrity"
+    ],
+    "companyRelevance": [
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-021",
+    "subtopic": "SQL Advanced",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find the top 3 highest paid employees in each department.",
+    "hints": [
+      "Window functions or correlated subquery"
+    ],
+    "idealAnswer": "```sql\n-- Using DENSE_RANK window function\nSELECT name, dept_id, salary\nFROM (\n    SELECT name, dept_id, salary,\n           DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) as rank\n    FROM employees\n) ranked\nWHERE rank <= 3;\n```\nPARTITION BY dept_id creates groups per department. ORDER BY salary DESC ranks within each group. DENSE_RANK handles ties (two people with same salary get same rank). ROW_NUMBER would give unique ranks even for ties. RANK would skip numbers after ties.",
+    "keyPoints": [
+      "DENSE_RANK window function",
+      "PARTITION BY for grouping",
+      "OVER clause",
+      "difference between RANK, DENSE_RANK, ROW_NUMBER"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-022",
+    "subtopic": "Transactions",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What are isolation levels in database transactions? Name them from least to most strict.",
+    "hints": [],
+    "idealAnswer": "Isolation levels control how much transactions can see each other's changes. From least to most strict: 1) Read Uncommitted: Can read uncommitted changes (dirty reads). Fastest but dangerous. 2) Read Committed: Can only read committed data. Prevents dirty reads. Default in PostgreSQL, Oracle. 3) Repeatable Read: Ensures reading the same data twice gives same result within a transaction. Prevents dirty reads and non-repeatable reads. Default in MySQL. 4) Serializable: Complete isolation \u2014 transactions behave as if executed one after another. Prevents all phenomena but slowest. Problems: Dirty Read (reading uncommitted data), Non-Repeatable Read (same query, different results), Phantom Read (new rows appear).",
+    "keyPoints": [
+      "four isolation levels",
+      "dirty read/non-repeatable read/phantom read",
+      "trade-off between consistency and performance",
+      "which level prevents which problem"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-023",
+    "subtopic": "SQL Basics",
+    "type": "comparison",
+    "difficulty": "easy",
+    "question": "What is the difference between UNION and UNION ALL in SQL?",
+    "hints": [],
+    "idealAnswer": "UNION combines results of two SELECT queries and removes duplicate rows. UNION ALL combines results and keeps ALL rows including duplicates. UNION is slower because it performs a DISTINCT operation to remove duplicates. UNION ALL is faster since it just concatenates results. Example:\n```sql\nSELECT city FROM customers\nUNION\nSELECT city FROM suppliers;\n-- Returns unique cities from both tables\n\nSELECT city FROM customers\nUNION ALL\nSELECT city FROM suppliers;\n-- Returns all cities, with duplicates\n```\nUse UNION ALL when you know there are no duplicates or when duplicates are acceptable \u2014 it's more performant.",
+    "keyPoints": [
+      "UNION removes duplicates",
+      "UNION ALL keeps all rows",
+      "UNION is slower",
+      "both require same column count/types"
+    ],
+    "companyRelevance": [
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-024",
+    "subtopic": "SQL Advanced",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Write a SQL query to find customers who have placed more than 3 orders in the last 30 days. Tables: customers(id, name), orders(id, customer_id, order_date).",
+    "hints": [],
+    "idealAnswer": "```sql\nSELECT c.name, COUNT(o.id) as order_count\nFROM customers c\nJOIN orders o ON c.id = o.customer_id\nWHERE o.order_date >= CURRENT_DATE - INTERVAL '30 days'\nGROUP BY c.id, c.name\nHAVING COUNT(o.id) > 3;\n```\nJOIN connects customers with their orders. WHERE filters to last 30 days. GROUP BY c.id (grouping by primary key is important). HAVING filters groups with count > 3. Date syntax may vary: MySQL uses DATE_SUB(NOW(), INTERVAL 30 DAY).",
+    "keyPoints": [
+      "JOIN + WHERE date filter",
+      "GROUP BY customer",
+      "HAVING for count filter",
+      "date arithmetic syntax"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-025",
+    "subtopic": "Indexing",
+    "type": "scenario",
+    "difficulty": "medium",
+    "question": "You have a slow query: SELECT * FROM orders WHERE customer_id = 123 AND status = 'pending' ORDER BY created_at DESC. How would you optimize it?",
+    "hints": [
+      "Think about what columns to index"
+    ],
+    "idealAnswer": "1) Create a composite index on the columns used in WHERE and ORDER BY: CREATE INDEX idx_orders_cust_status_date ON orders(customer_id, status, created_at DESC); This composite index helps the query find rows by customer_id and status efficiently, and returns them already sorted by created_at. 2) Avoid SELECT * \u2014 select only needed columns to reduce I/O. 3) Check if customer_id already has an index. 4) Use EXPLAIN to analyze the query plan before and after. 5) Column order in composite index matters \u2014 put equality conditions (customer_id, status) before range/sort columns (created_at). This is called the 'leftmost prefix rule'.",
+    "keyPoints": [
+      "composite index on WHERE + ORDER BY columns",
+      "column order matters in index",
+      "avoid SELECT *",
+      "use EXPLAIN to verify"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-026",
+    "subtopic": "Concurrency",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What is concurrency control in databases? Why is it important?",
+    "hints": [
+      "Think about multiple users accessing data at the same time."
+    ],
+    "idealAnswer": "Concurrency control manages simultaneous operations in a database without conflicting with each other. It ensures that transactions are executed in a safe manner and respect the ACID properties (especially Isolation). It's important because without it, problems like 'dirty reads' (reading uncommitted data), 'lost updates' (two transactions updating the same data overriding each other), and 'phantom reads' can occur, leading to data inconsistency. Techniques include Locking (Shared/Exclusive locks), Timestamp ordering, and Optimistic concurrency control.",
+    "keyPoints": [
+      "manages simultaneous operations",
+      "prevents dirty reads/lost updates",
+      "maintains ACID (Isolation)",
+      "techniques: locking, timestamp"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-027",
+    "subtopic": "Concurrency",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What is a deadlock in a database system? How can it be prevented or resolved?",
+    "hints": [
+      "Wait-for graphs, timeouts"
+    ],
+    "idealAnswer": "A deadlock happens when two or more transactions are waiting indefinitely for one another to release locks. For example, Transaction 1 holds Lock A and waits for Lock B; Transaction 2 holds Lock B and waits for Lock A. Prevention/Resolution: 1. **Timeouts**: If a transaction waits too long for a lock, it is rolled back. 2. **Deadlock Detection**: The DBMS periodically checks for cycles in the wait-for graph. If a cycle exists, it kills (rolls back) one of the transactions. 3. **Deadlock Prevention**: Transactions must request all needed locks at the beginning, or use techniques like Wait-Die and Wound-Wait schemes.",
+    "keyPoints": [
+      "two transactions waiting for each other",
+      "cycle in wait-for graph",
+      "resolved via timeouts or victims",
+      "prevented by lock ordering"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-028",
+    "subtopic": "Normalization",
+    "type": "scenario",
+    "difficulty": "medium",
+    "question": "Design this legacy table for using in a relational database:\nID | Name | Email | Subject | Courses\n1 | Rahim | rahim@gmail.com | CSE | CSE101, CSE102, EEE101\n2 | karim | karim@gmail.com | EEE | EEE101, CSE102",
+    "hints": [
+      "Look at the Courses column. Is it atomic? Follow 1NF to 3NF."
+    ],
+    "idealAnswer": "The 'Courses' column has comma-separated values, violating First Normal Form (1NF). Also, mixing Student info and Course enrollment causes redundancy and anomalies. Normalized Design (3NF):\n1. **Students Table**: (StudentID [PK], Name, Email, MajorSubject)\n2. **Courses Table**: (CourseID [PK], CourseName)\n3. **Enrollments Table**: (EnrollmentID [PK], StudentID [FK], CourseID [FK])\nThis separates entities completely. A student exists independent of courses, courses exist independent of students, and the many-to-many relationship is handled by the junction table (Enrollments).",
+    "keyPoints": [
+      "Courses column violates 1NF",
+      "Many-to-many relationship",
+      "Create Students table",
+      "Create Courses table",
+      "Create Enrollments junction table"
+    ],
+    "companyRelevance": [
+      "therap",
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-029",
+    "subtopic": "Architecture",
+    "type": "comparison",
+    "difficulty": "easy",
+    "question": "What are the main differences between SQL (Relational) and NoSQL (Non-Relational) databases? When would you use which?",
+    "hints": [
+      "Schema vs Schemaless, Vertical vs Horizontal scaling"
+    ],
+    "idealAnswer": "**SQL Databases (MySQL, PostgreSQL):** Have predefined, rigid schemas. Data is stored in tables with rows and columns. Good for complex queries, transactions (ACID), and structured data. Scale vertically (bigger servers).\n**NoSQL Databases (MongoDB, Redis, Cassandra):** Have dynamic (flexible) schemas. Data is stored as JSON-like documents, key-value pairs, or graphs. Good for unstructured data, rapid development, and massive scale. Scale horizontally (adding more servers).\nUse SQL for financial systems or strict relational data. Use NoSQL for rapidly changing data, big data, caching, or flexible catalogs.",
+    "keyPoints": [
+      "SQL rigid schema vs NoSQL flexible",
+      "SQL tables vs NoSQL documents/key-value",
+      "SQL scales vertically vs NoSQL horizontally",
+      "SQL for ACID, NoSQL for speed/scale"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "general"
+    ]
+  },
+  {
+    "id": "db-030",
+    "subtopic": "SQL Basics",
+    "type": "comparison",
+    "difficulty": "easy",
+    "question": "What are DDL, DML, DCL, and TCL in SQL? Give examples of commands for each.",
+    "hints": [],
+    "idealAnswer": "These are categories of SQL commands:\n**DDL (Data Definition Language):** Deals with the structure/schema of the database. Commands: CREATE, ALTER, DROP, TRUNCATE.\n**DML (Data Manipulation Language):** Deals with the data itself. Commands: SELECT, INSERT, UPDATE, DELETE.\n**DCL (Data Control Language):** Deals with permissions and security. Commands: GRANT, REVOKE.\n**TCL (Transaction Control Language):** Deals with transactions. Commands: COMMIT, ROLLBACK, SAVEPOINT.\nAn easy way to remember: DDL affects tables, DML affects rows.",
+    "keyPoints": [
+      "DDL for schema (CREATE, DROP)",
+      "DML for data (INSERT, SELECT)",
+      "DCL for permissions (GRANT)",
+      "TCL for transactions (COMMIT)"
+    ],
+    "companyRelevance": [
+      "bkash",
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-031",
+    "subtopic": "Architecture",
+    "type": "comparison",
+    "difficulty": "easy",
+    "question": "What are the main advantages of a DBMS over a traditional File System for storing data?",
+    "hints": [
+      "Think about searching, security, and multiple users"
+    ],
+    "idealAnswer": "1. **Data Redundancy/Inconsistency:** DBMS reduces duplication holding centralized data. File systems often have identical data saved in multiple files.\n2. **Data Access:** DBMS provides query languages (SQL) and indexing for fast data retrieval; file systems require custom programs to search.\n3. **Concurrency:** DBMS handles multiple users reading/writing at the same time safely (locking). File systems may corrupt data on simultaneous writes.\n4. **Security & Integrity:** DBMS provides fine-grained user permissions and enforces data constraints (like NOT NULL, Primary Keys).\n5. **Crash Recovery:** DBMS uses logs to recover transactions after a crash.",
+    "keyPoints": [
+      "DBMS reduces redundancy",
+      "DBMS has SQL for querying",
+      "DBMS handles concurrency safely",
+      "DBMS provides better security"
+    ],
+    "companyRelevance": [
+      "general"
+    ]
+  },
+  {
+    "id": "db-032",
+    "subtopic": "SQL Advanced",
+    "type": "comparison",
+    "difficulty": "medium",
+    "question": "What is the difference between a Stored Procedure and a Function in SQL?",
+    "hints": [
+      "Think about return values and usage in SELECT statements"
+    ],
+    "idealAnswer": "**Function:** Must return exactly one value (or table). It can be used directly inside a `SELECT` or `WHERE` clause (e.g., `SELECT dbo.CalculateTax(salary) FROM employees`). Cannot perform transactions (no COMMIT/ROLLBACK) changing database state.\n**Stored Procedure:** Does not have to return a value (can return zero or multiple result sets). Cannot be used inside a `SELECT` statement directly (must be executed via `EXEC` or `CALL`). Can perform state-changing transactions (COMMIT/ROLLBACK).\nUse Functions for computing/formatting values. Use Procedures for encapsulating business logic and complex workflows.",
+    "keyPoints": [
+      "Function must return a value",
+      "Function used in SELECT",
+      "Procedure cannot be in SELECT",
+      "Procedure can handle transactions"
+    ],
+    "companyRelevance": [
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-033",
+    "subtopic": "Indexing",
+    "type": "comparison",
+    "difficulty": "medium",
+    "question": "Explain the difference between a Clustered Index and a Non-Clustered Index.",
+    "hints": [
+      "Think about how the physical data is stored"
+    ],
+    "idealAnswer": "**Clustered Index:** Determines the physical sorting order of the data on the disk. Because data can only be sorted one way physically, a table can have **only one** clustered index (usually the Primary Key). The leaf nodes of the index contain the actual data rows.\n**Non-Clustered Index:** Does not alter the physical placement of data. Instead, it creates a separate structure (like a textbook index at the back). The leaf nodes contain pointers/references to the actual data rows. A table can have **multiple** non-clustered indexes.\nClustered is generally faster for reads because data is right there, but rearranging data on insert/update can be slow.",
+    "keyPoints": [
+      "Clustered sorts physical data",
+      "Only 1 clustered index per table",
+      "Non-clustered uses pointers",
+      "Multiple non-clustered allowed"
+    ],
+    "companyRelevance": [
+      "therap",
+      "general"
+    ]
+  },
+  {
+    "id": "db-034",
+    "subtopic": "Keys",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What are Super Key, Candidate Key, and Composite Key?",
+    "hints": [],
+    "idealAnswer": "Super Key: Any set of attributes (columns) that uniquely identifies a row in a table. For example, {StudentID}, {StudentID, Name}, {Email, Name} could all be super keys. Candidate Key: A minimal super key. It uniquely identifies a row, but if you remove any column from it, it loses its uniqueness. A table can have multiple candidate keys (e.g., StudentID and Email). One of these is chosen as the Primary Key. Composite Key: A Primary Key consisting of more than one column. Often used in junction tables. Example: in an 'Enrollments' table, the composite key might be {StudentID, CourseID}.",
+    "keyPoints": [
+      "Super Key: any unique set",
+      "Candidate Key: minimal super key",
+      "Primary key is selected from candidates",
+      "Composite key: PK with multiple columns"
+    ],
+    "companyRelevance": ["general"]
+  },
+  {
+    "id": "db-035",
+    "subtopic": "Relationships",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "question": "Explain One-to-One, One-to-Many, and Many-to-Many relationships with real-world examples.",
+    "hints": [],
+    "idealAnswer": "One-to-One (1:1): One record in Table A relates to exactly one record in Table B. Example: User to UserDetails. Usually implemented by putting a UNIQUE constraint on a foreign key. One-to-Many (1:N): One record in Table A relates to multiple records in Table B. Example: User to Orders (One user can have many orders, but each order belongs to one user). Implemented with a foreign key in Table B pointing to Table A. Many-to-Many (M:N): Multiple records in Table A relate to multiple records in Table B. Example: Student to Course (A student takes many courses, a course has many students). Implemented using a third 'Junction Table' containing foreign keys to both tables.",
+    "keyPoints": [
+      "1:1 Example: User to Profile",
+      "1:N Example: User to Orders",
+      "M:N Example: Student to Course",
+      "M:N requires a junction table"
+    ],
+    "companyRelevance": ["bkash", "general"]
+  },
+  {
+    "id": "db-036",
+    "subtopic": "ER Diagrams",
+    "type": "conceptual",
+    "difficulty": "medium",
+    "question": "What is a Weak Entity in an ER diagram? How do you convert a Many-to-Many relationship into tables?",
+    "hints": [],
+    "idealAnswer": "Weak Entity: An entity that does not have its own primary key and depends entirely on a 'strong entity' for its existence. Example: A 'Room' entity depends on a 'Building' entity. If the building is deleted, the rooms cease to exist. In ER diagrams, it's drawn with a double rectangle. Converting M:N to Tables: You cannot represent a Many-to-Many relationship directly using just two tables. You must create a third 'Junction' (or Relational) table. The primary key of this new table is typically a composite key made up of the foreign keys referencing the two original tables.",
+    "keyPoints": [
+      "Weak entity depends on strong entity",
+      "No standalone primary key for weak entity",
+      "M:N converted using Junction Table"
+    ],
+    "companyRelevance": ["general"]
+  },
+  {
+    "id": "db-037",
+    "subtopic": "Real-world Application",
+    "type": "scenario",
+    "difficulty": "medium",
+    "question": "In a payment app like bKash, why are database transactions and indexing critical?",
+    "hints": [],
+    "idealAnswer": "Transactions are critical because financial operations involve multiple steps that must succeed or fail together (Atomicity). For example, sending money involves debiting the sender and crediting the receiver. If the system crashes mid-way without a transaction, money vanishes. ACID properties prevent race conditions when thousands of users transfer money simultaneously. Indexing is critical because payment apps search vast amounts of transaction history rapidly. When a user requests their transaction statement, an index on 'customer_id' and 'timestamp' allows the DB to instantly fetch the records natively in O(log n) time instead of scanning billions of rows, ensuring the app remains fast and responsive.",
+    "keyPoints": [
+      "Atomicity prevents money loss mid-transfer",
+      "ACID concurrency prevents race conditions",
+      "Indexing enables fast transaction history lookups",
+      "O(log n) search instead of full table scan"
+    ],
+    "companyRelevance": ["bkash", "general"]
+  },
+  {
+    "id": "db-038",
+    "subtopic": "Basics",
+    "type": "conceptual",
+    "difficulty": "easy",
+    "question": "What is a Table, Row, and Column in a Relational Database?",
+    "hints": [],
+    "idealAnswer": "Table (Relation): A collection of related data held in a structured format within a database. It represents a specific entity (like Users or Orders). Row (Record/Tuple): A single, horizontal distinct data item in a table. It represents one complete instance of the entity (e.g., one specific User's data). Column (Field/Attribute): A vertical entity in a table that contains all information associated with a specific field (e.g., 'Email' or 'Age' for all users). Every column has a specific data type.",
+    "keyPoints": [
+      "Table = Entity",
+      "Row = Single Record / Tuple",
+      "Column = Attribute / Field with a data type"
+    ],
+    "companyRelevance": ["general"]
+  }
 ]

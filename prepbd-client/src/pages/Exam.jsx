@@ -2,37 +2,61 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Exam.css';
 
+function getInitialConfig() {
+  try {
+    const saved = sessionStorage.getItem('testConfig');
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+}
+
+function getInitialAnswers() {
+  try {
+    const saved = sessionStorage.getItem('testAnswers');
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+function getInitialTimeLeft(config) {
+  if (!config || config.timerMinutes <= 0) return null;
+  const elapsed = Math.floor((Date.now() - config.startTime) / 1000);
+  const remaining = config.timerMinutes * 60 - elapsed;
+  return Math.max(0, remaining);
+}
+
 export default function Exam() {
   const navigate = useNavigate();
-  const [config, setConfig] = useState(null);
+  const [config] = useState(getInitialConfig);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState(getInitialAnswers);
   const [showModal, setShowModal] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(() => getInitialTimeLeft(getInitialConfig()));
 
-  // Load config from sessionStorage
+  // Redirect if test config is missing
   useEffect(() => {
-    const saved = sessionStorage.getItem('testConfig');
-    if (!saved) {
+    if (!config) {
       navigate('/test/setup');
-      return;
     }
-    const parsed = JSON.parse(saved);
-    setConfig(parsed);
+  }, [config, navigate]);
 
-    // Restore saved answers
-    const savedAnswers = sessionStorage.getItem('testAnswers');
-    if (savedAnswers) {
-      setAnswers(JSON.parse(savedAnswers));
-    }
-
-    // Set timer
-    if (parsed.timerMinutes > 0) {
-      const elapsed = Math.floor((Date.now() - parsed.startTime) / 1000);
-      const remaining = parsed.timerMinutes * 60 - elapsed;
-      setTimeLeft(Math.max(0, remaining));
-    }
-  }, [navigate]);
+  const handleSubmit = useCallback(() => {
+    if (!config) return;
+    sessionStorage.setItem(
+      'testResults',
+      JSON.stringify({
+        questions: config.questions,
+        answers,
+        timeTaken: config.timerMinutes > 0
+          ? config.timerMinutes * 60 - (timeLeft || 0)
+          : Math.floor((Date.now() - config.startTime) / 1000),
+      })
+    );
+    sessionStorage.removeItem('testAnswers');
+    navigate('/test/results');
+  }, [config, answers, timeLeft, navigate]);
 
   // Timer countdown
   useEffect(() => {
@@ -56,22 +80,6 @@ export default function Exam() {
       sessionStorage.setItem('testAnswers', JSON.stringify(answers));
     }
   }, [answers]);
-
-  const handleSubmit = useCallback(() => {
-    if (!config) return;
-    sessionStorage.setItem(
-      'testResults',
-      JSON.stringify({
-        questions: config.questions,
-        answers,
-        timeTaken: config.timerMinutes > 0
-          ? config.timerMinutes * 60 - (timeLeft || 0)
-          : Math.floor((Date.now() - config.startTime) / 1000),
-      })
-    );
-    sessionStorage.removeItem('testAnswers');
-    navigate('/test/results');
-  }, [config, answers, timeLeft, navigate]);
 
   if (!config) return null;
 

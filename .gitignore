@@ -32,6 +32,7 @@ Thumbs.db
 
 # AI files
 .gemini/
+my-research.txt
 
 # Environment files
 .env

@@ -3,27 +3,32 @@ import { useNavigate } from 'react-router-dom';
 import { evaluateAnswers } from '../services/api';
 import '../styles/Results.css';
 
+function getInitialTestData() {
+  try {
+    const saved = sessionStorage.getItem('testResults');
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Results() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [evaluation, setEvaluation] = useState(null);
-  const [testData, setTestData] = useState(null);
+  const [testData] = useState(getInitialTestData);
   const [expandedCards, setExpandedCards] = useState({});
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('testResults');
-    if (!saved) {
+    if (!testData) {
       navigate('/test/setup');
       return;
     }
 
-    const data = JSON.parse(saved);
-    setTestData(data);
-
     // Build answers for API
-    const answerPayload = data.questions.map((q) => ({
+    const answerPayload = testData.questions.map((q) => ({
       questionId: q.id,
-      userAnswer: data.answers[q.id] || '',
+      userAnswer: testData.answers[q.id] || '',
     }));
 
     evaluateAnswers(answerPayload)
@@ -39,10 +44,10 @@ export default function Results() {
         // Fallback: show basic results without AI
         setEvaluation({
           summary: 'Could not connect to the evaluation server. Please make sure the API is running and try again.',
-          evaluations: data.questions.map((q) => ({
+          evaluations: testData.questions.map((q) => ({
             questionId: q.id,
             question: q.questionText || q.question,
-            userAnswer: data.answers[q.id] || '[Not attempted]',
+            userAnswer: testData.answers[q.id] || '[Not attempted]',
             accuracy: 'AI evaluation unavailable.',
             gaps: 'Could not evaluate.',
             improvement: 'Try again with the API server running.',
@@ -52,7 +57,7 @@ export default function Results() {
         setLoading(false);
         setExpandedCards({ 0: true });
       });
-  }, [navigate]);
+  }, [navigate, testData]);
 
   function toggleCard(index) {
     setExpandedCards((prev) => ({ ...prev, [index]: !prev[index] }));
