@@ -28,6 +28,12 @@ public class Question
     [JsonPropertyName("hints")]
     public List<string> Hints { get; set; } = new();
 
+    [JsonPropertyName("examples")]
+    public List<QuestionExample> Examples { get; set; } = new();
+
+    [JsonPropertyName("leetcodeUrl")]
+    public string? LeetCodeUrl { get; set; }
+
     [JsonPropertyName("idealAnswer")]
     public string IdealAnswer { get; set; } = string.Empty;
 
@@ -63,6 +69,26 @@ public class QuestionResponse
 
     [JsonPropertyName("hints")]
     public List<string> Hints { get; set; } = new();
+
+    [JsonPropertyName("examples")]
+    public List<QuestionExample> Examples { get; set; } = new();
+
+    [JsonPropertyName("leetcodeUrl")]
+    public string? LeetCodeUrl { get; set; }
+}
+
+// A sample input/output pair for coding & SQL questions. Shown to the candidate and
+// fed to the evaluator so it can mentally run the submitted code against concrete cases.
+public class QuestionExample
+{
+    [JsonPropertyName("input")]
+    public string Input { get; set; } = string.Empty;
+
+    [JsonPropertyName("output")]
+    public string Output { get; set; } = string.Empty;
+
+    [JsonPropertyName("explanation")]
+    public string? Explanation { get; set; }
 }
 
 public class TopicInfo

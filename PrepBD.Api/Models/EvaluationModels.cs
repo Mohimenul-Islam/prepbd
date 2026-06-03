@@ -37,6 +37,9 @@ public class QuestionEvaluation
     [JsonPropertyName("userAnswer")]
     public string UserAnswer { get; set; } = string.Empty;
 
+    [JsonPropertyName("score")]
+    public int? Score { get; set; }
+
     [JsonPropertyName("accuracy")]
     public string Accuracy { get; set; } = string.Empty;
 

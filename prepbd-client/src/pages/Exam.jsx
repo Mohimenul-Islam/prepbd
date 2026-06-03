@@ -164,6 +164,30 @@ export default function Exam() {
             {renderQuestion(current.questionText || current.question)}
           </div>
 
+          {current.examples && current.examples.length > 0 && (
+            <div className="examples">
+              <div className="examples-label">Examples</div>
+              {current.examples.map((ex, i) => (
+                <div key={i} className="example-row">
+                  <div><span className="example-key">Input:</span> <code>{ex.input}</code></div>
+                  <div><span className="example-key">Output:</span> <code>{ex.output}</code></div>
+                  {ex.explanation && <div className="example-explain">{ex.explanation}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {current.leetcodeUrl && (
+            <a
+              className="leetcode-btn"
+              href={current.leetcodeUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Solve a similar problem on LeetCode ↗
+            </a>
+          )}
+
           {current.hints && current.hints.length > 0 && (
             <div style={{ marginBottom: 'var(--space-lg)', padding: 'var(--space-md)', background: 'var(--info-bg)', border: '1px solid var(--info-border)', borderRadius: 'var(--radius-sm)' }}>
               <strong style={{ color: 'var(--info)' }}>💡 Hint:</strong>{' '}

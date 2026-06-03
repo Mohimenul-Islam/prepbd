@@ -112,7 +112,9 @@ public class QuestionService
                 Type = q.Type,
                 Difficulty = q.Difficulty,
                 QuestionText = q.QuestionText,
-                Hints = q.Hints
+                Hints = q.Hints,
+                Examples = q.Examples,
+                LeetCodeUrl = q.LeetCodeUrl
             })
             .ToList();
 

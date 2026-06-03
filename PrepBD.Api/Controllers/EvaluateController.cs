@@ -8,11 +8,11 @@ namespace PrepBD.Api.Controllers;
 [Route("api/[controller]")]
 public class EvaluateController : ControllerBase
 {
-    private readonly GeminiService _geminiService;
+    private readonly EvaluationService _evaluationService;
 
-    public EvaluateController(GeminiService geminiService)
+    public EvaluateController(EvaluationService evaluationService)
     {
-        _geminiService = geminiService;
+        _evaluationService = evaluationService;
     }
 
     [HttpPost]
@@ -23,7 +23,7 @@ public class EvaluateController : ControllerBase
             return BadRequest("No answers provided.");
         }
 
-        var result = await _geminiService.EvaluateAnswersAsync(request);
+        var result = await _evaluationService.EvaluateAnswersAsync(request);
         return Ok(result);
     }
 
@@ -32,10 +32,10 @@ public class EvaluateController : ControllerBase
     {
         return Ok(new
         {
-            configured = _geminiService.IsConfigured,
-            message = _geminiService.IsConfigured
-                ? "Gemini AI evaluation is active."
-                : "Gemini API key not configured. Add your key in appsettings.json. The app will show model answers as fallback."
+            configured = _evaluationService.IsConfigured,
+            message = _evaluationService.IsConfigured
+                ? "AI evaluation is active."
+                : "LLM API key not configured. Set Llm:ApiKey (e.g. via user-secrets). The app will show model answers as fallback."
         });
     }
 }

@@ -69,6 +69,12 @@ export default function Results() {
     return `${m}m ${s}s`;
   }
 
+  function scoreClass(score) {
+    if (score >= 8) return 'good';
+    if (score >= 5) return 'mid';
+    return 'low';
+  }
+
   function renderContent(text) {
     if (!text) return '';
     // Handle code blocks in evaluation text
@@ -100,6 +106,10 @@ export default function Results() {
     ? Object.values(testData.answers).filter((a) => a?.trim().length > 0).length
     : 0;
 
+  const gradedEvals = evaluation?.evaluations?.filter((e) => e.score != null) ?? [];
+  const totalScore = gradedEvals.reduce((sum, e) => sum + e.score, 0);
+  const maxScore = gradedEvals.length * 10;
+
   return (
     <div className="results">
       <div className="container-narrow">
@@ -112,6 +122,14 @@ export default function Results() {
           <h2>📋 Overall Summary</h2>
           <div className="summary-text">{evaluation?.summary}</div>
           <div className="summary-stats">
+            {maxScore > 0 && (
+              <div className="summary-stat">
+                <div className={`summary-stat-value score-${scoreClass(maxScore ? (totalScore / maxScore) * 10 : 0)}`}>
+                  {totalScore}/{maxScore}
+                </div>
+                <div className="summary-stat-label">Score</div>
+              </div>
+            )}
             <div className="summary-stat">
               <div className="summary-stat-value" style={{ color: 'var(--accent-primary)' }}>
                 {testData?.questions.length}
@@ -157,7 +175,12 @@ export default function Results() {
                     </>
                   )}
                 </div>
-                <span className={`eval-toggle ${expandedCards[i] ? 'open' : ''}`}>▼</span>
+                <div className="eval-card-meta">
+                  {ev.score != null && (
+                    <span className={`score-chip score-${scoreClass(ev.score)}`}>{ev.score}/10</span>
+                  )}
+                  <span className={`eval-toggle ${expandedCards[i] ? 'open' : ''}`}>▼</span>
+                </div>
               </div>
 
               {expandedCards[i] && (

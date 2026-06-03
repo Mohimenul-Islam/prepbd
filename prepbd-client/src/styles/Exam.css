@@ -162,6 +162,74 @@
   margin: var(--space-md) 0;
 }
 
+/* ===== Examples ===== */
+.examples {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.examples-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.example-row {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  padding: var(--space-sm) 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.example-row:first-of-type {
+  border-top: none;
+}
+
+.example-key {
+  color: var(--text-muted);
+}
+
+.example-row code {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--text-primary);
+}
+
+.example-explain {
+  margin-top: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ===== LeetCode link ===== */
+.leetcode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #ffa116;
+  background: rgba(255, 161, 22, 0.1);
+  border: 1px solid rgba(255, 161, 22, 0.3);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.leetcode-btn:hover {
+  color: #ffa116;
+  background: rgba(255, 161, 22, 0.18);
+  border-color: rgba(255, 161, 22, 0.5);
+}
+
 .answer-section h3 {
   font-size: 0.9rem;
   color: var(--text-secondary);

@@ -133,6 +133,43 @@
   color: var(--text-accent);
 }
 
+.eval-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.score-chip {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+}
+
+.score-chip.score-good {
+  color: var(--success);
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.score-chip.score-mid {
+  color: var(--warning);
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+}
+
+.score-chip.score-low {
+  color: var(--error);
+  background: var(--error-bg);
+  border-color: var(--error-border);
+}
+
+.summary-stat-value.score-good { color: var(--success); }
+.summary-stat-value.score-mid { color: var(--warning); }
+.summary-stat-value.score-low { color: var(--error); }
+
 .eval-toggle {
   font-size: 1.2rem;
   color: var(--text-muted);
