@@ -16,6 +16,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -38,6 +40,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -60,6 +64,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -80,6 +86,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -100,6 +108,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -142,6 +152,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -162,6 +174,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -182,6 +196,7 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
       "general"
     ]
   },
@@ -202,6 +217,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -214,6 +231,17 @@
     "hints": [
       "There are multiple approaches \u2014 subquery, LIMIT OFFSET, or DENSE_RANK"
     ],
+    "examples": [
+      {
+        "input": "salaries: 100, 200, 300",
+        "output": "200"
+      },
+      {
+        "input": "salaries: 100 (only one row)",
+        "output": "NULL"
+      }
+    ],
+    "leetcodeUrl": "https://leetcode.com/problems/second-highest-salary/",
     "idealAnswer": "```sql\n-- Approach 1: Subquery\nSELECT MAX(salary) AS second_highest\nFROM employees\nWHERE salary < (SELECT MAX(salary) FROM employees);\n\n-- Approach 2: LIMIT OFFSET\nSELECT DISTINCT salary\nFROM employees\nORDER BY salary DESC\nLIMIT 1 OFFSET 1;\n\n-- Approach 3: DENSE_RANK (handles ties)\nSELECT salary FROM (\n    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) as rank\n    FROM employees\n) t WHERE rank = 2;\n```\nApproach 1: Find max salary less than the overall max. Approach 2: Sort descending, skip first, take next. Approach 3: Window function handles ties correctly.",
     "keyPoints": [
       "multiple approaches exist",
@@ -224,6 +252,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -243,6 +273,7 @@
     ],
     "companyRelevance": [
       "therap",
+      "optimizely",
       "general"
     ]
   },
@@ -285,6 +316,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -307,6 +340,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -327,6 +362,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -339,6 +376,13 @@
     "hints": [
       "GROUP BY and HAVING"
     ],
+    "examples": [
+      {
+        "input": "emails: a@x.com, b@x.com, a@x.com",
+        "output": "a@x.com"
+      }
+    ],
+    "leetcodeUrl": "https://leetcode.com/problems/duplicate-emails/",
     "idealAnswer": "```sql\nSELECT email, COUNT(*) as count\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1;\n```\nGroup by email, then filter groups where count > 1 (meaning that email appears more than once). To also get the full rows of duplicates:\n```sql\nSELECT * FROM users\nWHERE email IN (\n    SELECT email FROM users\n    GROUP BY email\n    HAVING COUNT(*) > 1\n);\n```\nThis is a common interview question that tests GROUP BY + HAVING understanding.",
     "keyPoints": [
       "GROUP BY email",
@@ -349,6 +393,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -368,6 +414,8 @@
     ],
     "companyRelevance": [
       "therap",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -380,6 +428,13 @@
     "hints": [
       "LEFT JOIN and check for NULL, or use NOT IN / NOT EXISTS"
     ],
+    "examples": [
+      {
+        "input": "employees with dept_id = NULL",
+        "output": "those employees' names"
+      }
+    ],
+    "leetcodeUrl": "https://leetcode.com/problems/customers-who-never-order/",
     "idealAnswer": "```sql\n-- Approach 1: LEFT JOIN + IS NULL\nSELECT e.name\nFROM employees e\nLEFT JOIN departments d ON e.dept_id = d.id\nWHERE d.id IS NULL;\n\n-- Approach 2: NOT EXISTS\nSELECT name FROM employees e\nWHERE NOT EXISTS (\n    SELECT 1 FROM departments d WHERE d.id = e.dept_id\n);\n\n-- Approach 3: NOT IN\nSELECT name FROM employees\nWHERE dept_id NOT IN (SELECT id FROM departments);\n```\nLEFT JOIN approach: join all employees with departments, then filter where department side is NULL (no match). NOT EXISTS is often the most efficient for large tables.",
     "keyPoints": [
       "LEFT JOIN with NULL check",
@@ -390,6 +445,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -409,6 +466,7 @@
     ],
     "companyRelevance": [
       "therap",
+      "optimizely",
       "general"
     ]
   },
@@ -421,6 +479,13 @@
     "hints": [
       "Window functions or correlated subquery"
     ],
+    "examples": [
+      {
+        "input": "dept A: 90,80,70,60  | dept B: 50,40",
+        "output": "A: 90,80,70 ; B: 50,40"
+      }
+    ],
+    "leetcodeUrl": "https://leetcode.com/problems/department-top-three-salaries/",
     "idealAnswer": "```sql\n-- Using DENSE_RANK window function\nSELECT name, dept_id, salary\nFROM (\n    SELECT name, dept_id, salary,\n           DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) as rank\n    FROM employees\n) ranked\nWHERE rank <= 3;\n```\nPARTITION BY dept_id creates groups per department. ORDER BY salary DESC ranks within each group. DENSE_RANK handles ties (two people with same salary get same rank). ROW_NUMBER would give unique ranks even for ties. RANK would skip numbers after ties.",
     "keyPoints": [
       "DENSE_RANK window function",
@@ -431,6 +496,8 @@
     "companyRelevance": [
       "bkash",
       "therap",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -469,6 +536,8 @@
     ],
     "companyRelevance": [
       "therap",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -488,6 +557,8 @@
     ],
     "companyRelevance": [
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -510,6 +581,7 @@
     "companyRelevance": [
       "bkash",
       "therap",
+      "optimizely",
       "general"
     ]
   },
@@ -576,6 +648,8 @@
     "companyRelevance": [
       "therap",
       "bkash",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -597,6 +671,7 @@
     ],
     "companyRelevance": [
       "bkash",
+      "optimizely",
       "general"
     ]
   },
@@ -617,6 +692,8 @@
     "companyRelevance": [
       "bkash",
       "therap",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -637,6 +714,7 @@
       "DBMS provides better security"
     ],
     "companyRelevance": [
+      "optimizely",
       "general"
     ]
   },
@@ -658,6 +736,8 @@
     ],
     "companyRelevance": [
       "therap",
+      "optimizely",
+      "cefalo",
       "general"
     ]
   },
@@ -679,6 +759,7 @@
     ],
     "companyRelevance": [
       "therap",
+      "optimizely",
       "general"
     ]
   },
@@ -696,7 +777,11 @@
       "Primary key is selected from candidates",
       "Composite key: PK with multiple columns"
     ],
-    "companyRelevance": ["general"]
+    "companyRelevance": [
+      "optimizely",
+      "cefalo",
+      "general"
+    ]
   },
   {
     "id": "db-035",
@@ -712,7 +797,11 @@
       "M:N Example: Student to Course",
       "M:N requires a junction table"
     ],
-    "companyRelevance": ["bkash", "general"]
+    "companyRelevance": [
+      "bkash",
+      "optimizely",
+      "general"
+    ]
   },
   {
     "id": "db-036",
@@ -727,7 +816,10 @@
       "No standalone primary key for weak entity",
       "M:N converted using Junction Table"
     ],
-    "companyRelevance": ["general"]
+    "companyRelevance": [
+      "optimizely",
+      "general"
+    ]
   },
   {
     "id": "db-037",
@@ -743,7 +835,11 @@
       "Indexing enables fast transaction history lookups",
       "O(log n) search instead of full table scan"
     ],
-    "companyRelevance": ["bkash", "general"]
+    "companyRelevance": [
+      "bkash",
+      "optimizely",
+      "general"
+    ]
   },
   {
     "id": "db-038",
@@ -758,6 +854,62 @@
       "Row = Single Record / Tuple",
       "Column = Attribute / Field with a data type"
     ],
-    "companyRelevance": ["general"]
+    "companyRelevance": [
+      "optimizely",
+      "cefalo",
+      "general"
+    ]
+  },
+  {
+    "id": "db-039",
+    "subtopic": "Joins",
+    "type": "sql",
+    "difficulty": "medium",
+    "question": "Given an Employees(id, name, managerId) table where managerId references id in the same table, write a SQL query to list each employee alongside their manager's name. Employees with no manager should still appear.",
+    "hints": [
+      "Join the table to itself",
+      "Use a LEFT JOIN to keep top-level employees"
+    ],
+    "examples": [
+      {
+        "input": "Employees: (1,'CEO',NULL), (2,'Alice',1), (3,'Bob',1)",
+        "output": "Alice->CEO, Bob->CEO, CEO->(no manager)"
+      }
+    ],
+    "leetcodeUrl": "https://leetcode.com/problems/employees-earning-more-than-their-managers/",
+    "idealAnswer": "This needs a self-join: join Employees to a second alias of itself, matching the employee's managerId to the manager row's id. Use a LEFT JOIN so employees with a NULL managerId (e.g., the CEO) still appear:\n```\nSELECT e.name AS employee, m.name AS manager\nFROM Employees e\nLEFT JOIN Employees m ON e.managerId = m.id;\n```\nTable aliases (e for the employee role, m for the manager role) are mandatory because the same physical table plays two roles. An INNER JOIN here would silently drop employees who have no manager \u2014 the LEFT JOIN preserves them with manager = NULL.",
+    "keyPoints": [
+      "self-join: table joined to its own alias",
+      "LEFT JOIN keeps employees with no manager",
+      "aliases distinguish the two roles",
+      "INNER JOIN would drop top-level employees"
+    ],
+    "companyRelevance": [
+      "cefalo",
+      "general"
+    ]
+  },
+  {
+    "id": "db-040",
+    "subtopic": "Architecture",
+    "type": "comparison",
+    "difficulty": "medium",
+    "question": "When would you choose a NoSQL database over a relational (SQL) database, and when would you stick with SQL? Give concrete trade-offs.",
+    "hints": [
+      "Schema flexibility vs strong consistency",
+      "Scaling model and access patterns"
+    ],
+    "idealAnswer": "Choose SQL (relational) when you need strong consistency, multi-row ACID transactions, complex queries/joins, and a well-defined schema \u2014 e.g., financial ledgers, orders, anything where correctness and relationships matter (bKash-style payment records). Relational DBs scale vertically well and enforce integrity via constraints.\nChoose NoSQL when you need flexible/evolving schemas, very high write throughput, horizontal scale across many nodes, or a data model that fits documents/key-value/graph/wide-column better \u2014 e.g., session stores, product catalogs, event logs, real-time feeds. NoSQL often trades strict consistency for availability and partition tolerance (BASE / eventual consistency, per the CAP theorem).\nKey trade-offs: SQL gives joins, transactions, and integrity but rigid schema and harder horizontal sharding; NoSQL gives schema flexibility and scale-out but pushes consistency and join logic into the application. Many real systems use both (polyglot persistence): SQL for the source of truth, NoSQL for caching/feeds/search.",
+    "keyPoints": [
+      "SQL: ACID, joins, fixed schema, strong consistency",
+      "NoSQL: flexible schema, horizontal scale, eventual consistency",
+      "CAP / BASE vs ACID trade-off",
+      "polyglot persistence is common"
+    ],
+    "companyRelevance": [
+      "optimizely",
+      "bkash",
+      "general"
+    ]
   }
 ]

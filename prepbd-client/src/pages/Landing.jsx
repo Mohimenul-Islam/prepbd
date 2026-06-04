@@ -46,8 +46,8 @@ export default function Landing() {
             <span className="gradient-text">PrepBD</span>
           </h1>
           <p className="hero-subtitle">
-            Practice written tests with AI-powered evaluation. Prepare for bKash bTechWiz,
-            Therap Associate SWE, and other top BD tech company recruitment exams.
+            Practice written tests with AI-powered evaluation. Prepare for bKash bTechWhiz,
+            Therap, Optimizely, Cefalo, and other top BD tech company recruitment exams.
           </p>
           <div className="hero-actions">
             <button className="btn btn-primary btn-lg" onClick={() => navigate('/test/setup')}>
@@ -109,8 +109,8 @@ export default function Landing() {
             </div>
             <div className="feature-card animate-in delay-3">
               <div className="icon">🎯</div>
-              <h3>Company-Biased Questions</h3>
-              <p>50% of questions are biased toward bKash bTechWiz and Therap patterns. Practice what actually gets asked.</p>
+              <h3>Company-Tagged Questions</h3>
+              <p>Questions are mapped to real patterns from bKash bTechWhiz, Therap, Optimizely, and Cefalo recruitment tests. Practice what actually gets asked.</p>
             </div>
           </div>
         </section>
