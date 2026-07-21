@@ -30,13 +30,6 @@ Thumbs.db
 /prepbd-client/dist/
 /prepbd-client/dist-ssr/
 
-# AI files
-.gemini/
-my-research.txt
-
-# AI-generated prep guides / research notes (kept local, not pushed)
-/docs/
-
 # Environment files
 .env
 .env.local

@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/node_modules/
+prepbd-client/
+.git/
+.vs/
+.vscode/
+.idea/
+docs/
+*.md
